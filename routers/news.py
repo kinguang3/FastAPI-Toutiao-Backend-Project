@@ -1,8 +1,8 @@
 #导包
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends,Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from config.db_conf import get_database
-from curd import category
+from curd import news
 '''
 创建APIrouter实例
 prefix: 路由前缀
@@ -26,5 +26,28 @@ router = APIRouter(
 
 @router.get("/categories")
 async def get_news_categories(skip: int = 0, limit: int = 100, db: AsyncSession = Depends(get_database)):
-    categories = await category.get_categories(db, skip, limit)
+    categories = await news.get_categories(db, skip, limit)
     return {"categories": categories}
+
+
+@router.get("/list")
+async def get_news_list(
+     category_id: int = Query(..., alias="categoryId"),
+     page: int = 1,
+     page_size: int = Query(10, alias="pageSize",max_length=100), 
+     db: AsyncSession = Depends(get_database)
+     ):
+    news_list = await news.get_news_list(db, category_id, page, page_size)
+    total = await news.get_news_count(db, category_id)
+    '''
+    思路：处理分页->查询新闻列表->计算总量->计算是否还有更多
+    '''
+    has_more = total > page * page_size
+    return {
+        "news_list": news_list,
+        "total": total,
+        "has_more": has_more
+    }
+
+
+

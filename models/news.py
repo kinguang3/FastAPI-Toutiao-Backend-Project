@@ -1,3 +1,5 @@
+
+#创建分类,数据库没有分类,需要手动创建
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import String, Integer, Text, DateTime, ForeignKey, Boolean
