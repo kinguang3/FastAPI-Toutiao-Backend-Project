@@ -3,9 +3,22 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import String, Integer, Text, DateTime, ForeignKey, Boolean
 from datetime import datetime
 
-
+#基本时间
 class Base(AsyncAttrs, DeclarativeBase):
-    pass
+    create_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.now,
+        comment="创建时间"
+        )
+    update_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.now,
+        onupdate=datetime.now,
+        comment="更新时间"
+        )
+
+
+
 
 
 class User(Base):
@@ -36,5 +49,5 @@ class News(Base):
     category_id: Mapped[int] = mapped_column(Integer, ForeignKey("categories.id"))
     author_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
     is_published: Mapped[bool] = mapped_column(Boolean, default=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now)

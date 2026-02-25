@@ -1,0 +1,57 @@
+warning: in the working copy of 'models/news.py', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/crud/news.py b/crud/news.py[m
+[1mdeleted file mode 100644[m
+[1mindex 584e27e..0000000[m
+[1m--- a/crud/news.py[m
+[1m+++ /dev/null[m
+[36m@@ -1,12 +0,0 @@[m
+[31m-from sqlalchemy.ext.asyncio import AsyncSession[m
+[31m-from models.news import Category[m
+[31m-from sqlalchemy import select[m
+[31m-[m
+[31m-[m
+[31m-[m
+[31m-[m
+[31m-[m
+[31m-async def get_categories(db: AsyncSession, skip: int = 0, limit: int = 100):[m
+[31m-    query = select(Category).offset(skip).limit(limit)[m
+[31m-    result = await db.execute(query)[m
+[31m-    return result.scalars().all()[m
+\ No newline at end of file[m
+[1mdiff --git a/models/news.py b/models/news.py[m
+[1mindex a74ea36..56486fa 100644[m
+[1m--- a/models/news.py[m
+[1m+++ b/models/news.py[m
+[36m@@ -3,9 +3,22 @@[m [mfrom sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column[m
+ from sqlalchemy import String, Integer, Text, DateTime, ForeignKey, Boolean[m
+ from datetime import datetime[m
+ [m
+[31m-[m
+[32m+[m[32m#基本时间[m
+ class Base(AsyncAttrs, DeclarativeBase):[m
+[31m-    pass[m
+[32m+[m[32m    create_at: Mapped[datetime] = mapped_column([m
+[32m+[m[32m        DateTime,[m
+[32m+[m[32m        default=datetime.now,[m
+[32m+[m[32m        comment="创建时间"[m
+[32m+[m[32m        )[m
+[32m+[m[32m    update_at: Mapped[datetime] = mapped_column([m
+[32m+[m[32m        DateTime,[m
+[32m+[m[32m        default=datetime.now,[m
+[32m+[m[32m        onupdate=datetime.now,[m
+[32m+[m[32m        comment="更新时间"[m
+[32m+[m[32m        )[m
+[32m+[m
+[32m+[m
+[32m+[m
+ [m
+ [m
+ class User(Base):[m
+[36m@@ -36,5 +49,5 @@[m [mclass News(Base):[m
+     category_id: Mapped[int] = mapped_column(Integer, ForeignKey("categories.id"))[m
+     author_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))[m
+     is_published: Mapped[bool] = mapped_column(Boolean, default=False)[m
+[31m-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)[m
+[31m-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)[m
+[32m+[m[32m    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)[m
+[32m+[m[32m    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now)[m
