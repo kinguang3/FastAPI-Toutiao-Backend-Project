@@ -26,15 +26,24 @@ router = APIRouter(
 '''
 
 
+'''
+基本框架：
+1.定义路由
+2.定义依赖项
+3.调用curd方法
+4.返回结果
+'''
 
 
+
+#获取新闻分类
 
 @router.get("/categories")
 async def get_news_categories(skip: int = 0, limit: int = 100, db: AsyncSession = Depends(get_database)):
     categories = await news.get_categories(db, skip, limit)
     return {"categories": categories}
 
-
+#获取新闻列表
 @router.get("/list")
 async def get_news_list(
      category_id: int = Query(..., alias="categoryId"),
@@ -54,11 +63,22 @@ async def get_news_list(
         "has_more": has_more
     }
 
+
+#获取新闻详情:当前新闻详情+增加一次浏览量+相关新闻(同类新闻的id)
 @router.get("/detail")
 async def get_news_detail(
     news_id: int = Query(..., alias="Id"),#alias是自己定义的别名
     db: AsyncSession = Depends(get_database)
     ):
     news_detail = await news.get_news_detail(db, news_id)
-    return {"news_detail": news_detail}
+    if news_detail is None:#防止新闻不存在
+        raise HTTPException(status_code=404, detail="新闻不存在")
+
+
+    new_views = await news.increase_views(db, news_detail.id)    
+    if not new_views:
+        raise HTTPException(status_code=500, detail="新闻不存在")
+
+    related_news = await news.get_related_news(db, news_detail.id, news_detail.category_id)
+    return {"news_detail": news_detail, "views": news_detail.views, "related_news": related_news}
 
