@@ -44,12 +44,21 @@ class Category(Base):
 
 class News(Base):
     __tablename__ = "news"
-    
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    title: Mapped[str] = mapped_column(String(200), index=True)
-    content: Mapped[str] = mapped_column(Text)
-    category_id: Mapped[int] = mapped_column(Integer, ForeignKey("categories.id"))
-    author_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
-    is_published: Mapped[bool] = mapped_column(Boolean, default=False)
+    #高频查询场景,创建索引，提升速度
+    __table_args__ = (
+        Index("idx_news_category_id", "category_id"),
+        Index("idx_news_author_id", "author_id"),
+    )
+
+
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True,comment="新闻id")
+    title: Mapped[str] = mapped_column(String(200), index=True,comment="新闻标题")
+    content: Mapped[str] = mapped_column(Text,comment="新闻内容")
+    category_id: Mapped[int] = mapped_column(Integer, ForeignKey("categories.id"),comment="分类id")
+    author_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"),comment="作者id")
+    is_published: Mapped[bool] = mapped_column(Boolean, default=False,comment="是否发布")
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now)
+    views: Mapped[int] = mapped_column(Integer, default=0,comment="浏览量")
+
