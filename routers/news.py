@@ -14,6 +14,9 @@ router = APIRouter(
     tags=["news"],
 )
 
+
+
+
 '''
 接口实现流程
 1.API接口规范文档 -> 模块化路由
@@ -21,6 +24,8 @@ router = APIRouter(
 3.在curd文件夹下定义数据库操作的方法
 4.在路由处理函数里面调用curd方法,响应结果
 '''
+
+
 
 
 
@@ -49,5 +54,11 @@ async def get_news_list(
         "has_more": has_more
     }
 
-
+@router.get("/detail")
+async def get_news_detail(
+    news_id: int = Query(..., alias="Id"),#alias是自己定义的别名
+    db: AsyncSession = Depends(get_database)
+    ):
+    news_detail = await news.get_news_detail(db, news_id)
+    return {"news_detail": news_detail}
 
