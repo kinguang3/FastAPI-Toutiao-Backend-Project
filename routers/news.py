@@ -1,5 +1,5 @@
 #导包
-from fastapi import APIRouter, Depends,Query
+from fastapi import APIRouter, Depends,Query,HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from config.db_conf import get_database
 from curd import news
