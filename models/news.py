@@ -1,4 +1,4 @@
-
+#models 文件夹中的类定义了数据库表与 Python 对象之间的映射关系
 #创建分类,数据库没有分类,需要手动创建
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
@@ -34,7 +34,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(100), unique=True, index=True)
     password: Mapped[str] = mapped_column(String(100))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
 
 
 class Category(Base):

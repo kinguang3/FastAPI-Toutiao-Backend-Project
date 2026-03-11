@@ -8,6 +8,7 @@ from models.news import News
 
 async def get_categories(db: AsyncSession, skip: int = 0, limit: int = 100):
     query = select(Category).offset(skip).limit(limit)
+    #数据库的数据不够,导致有时运行会报错
     result = await db.execute(query)
     return result.scalars().all()
 

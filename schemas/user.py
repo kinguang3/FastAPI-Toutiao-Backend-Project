@@ -8,7 +8,10 @@ from pydantic import BaseModel
 
 
 
-#数据库的email,phone字段都是可选的,所以在请求体中也可以不写
+#数据库的email,phone字段都是必填的,所以在请求体中必需要写
+#必填项没填会报错(只有自带自增的属性才可以不填)
 class UserRequest(BaseModel):
     username: str
     password: str
+    email: str = None
+    phone: str = None
