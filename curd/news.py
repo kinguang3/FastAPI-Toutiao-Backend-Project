@@ -16,6 +16,7 @@ async def get_categories(db: AsyncSession, skip: int = 0, limit: int = 100):
 async def get_news_list(db: AsyncSession, category_id: int, skip: int = 1, limit: int = 10):
     skip = (skip - 1) * limit
     #where->筛选出指定分类的新闻(但是每条新闻都有News里面的属性)
+    #select(News) 表示要查询 News 模型对应的数据库表中的所有列。
     query = select(News).where(News.category_id == category_id).offset(skip).limit(limit)
     result = await db.execute(query)
     return result.scalars().all()

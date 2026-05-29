@@ -32,7 +32,8 @@ async def create_user(db: AsyncSession, user: UserRequest):
 #生成token
 async def create_token(db: AsyncSession, user_id: int, token: str, expires_at: datetime):
     #生成Token + 设置过期时间 -> 查询数据库是否存在该token -> 如果存在,返回错误信息 -> 如果不存在,创建token
-    token = str(uuid.uuid4())#转字符串
+    # 生成一个全局唯一的随机字符串作为用户登录凭证（token）
+    token = str(uuid.uuid4())
     #timedelta(days=7)表示时间长度
     expires_at = datetime.now() + timedelta(days=7)#设置过期时间为7天后
     query = select(UserToken).where(UserToken.user_id == user_id)#通过user_id查询是否存在该token
@@ -45,4 +46,5 @@ async def create_token(db: AsyncSession, user_id: int, token: str, expires_at: d
         user_token = UserToken(user_id=user_id, token=token, expires_at=expires_at)
         db.add(user_token)#添加到数据库
     await db.commit()
+    db.refresh(user_token)#刷新数据库中的user_token
     return token
